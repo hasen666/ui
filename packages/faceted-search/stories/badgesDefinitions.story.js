@@ -40,6 +40,31 @@ export const badgeConnectionType = {
 	},
 };
 
+export const badgeCustomAttributesType = {
+	properties: {
+		attribute: 'customAttr',
+		initialOperatorOpened: true,
+		initialValueOpened: false,
+		label: 'Custom Attribute',
+		operator: {},
+		operators: [],
+		type: '',
+	},
+	metadata: {
+		badgePerFacet: 'N',
+		entitiesPerBadge: '1',
+		values: [
+			{ id: '1111', label: 'Custom attribute 1' },
+			{ id: '2222', label: 'Custom attribute 2' },
+			{ id: '3333', label: 'Custom attribute 3' },
+			{ id: '4444', label: 'Custom attribute 4' },
+			{ id: '5555', label: 'Custom attribute 5' },
+			{ id: '6666', label: 'Custom attribute 6' },
+		],
+		operators: ['in'],
+	},
+};
+
 export const badgePrice = {
 	properties: {
 		attribute: 'price',
