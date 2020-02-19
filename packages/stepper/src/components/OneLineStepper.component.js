@@ -9,7 +9,12 @@ import I18N_NAMESPACE from './constant';
 import theme from './Stepper.component.scss';
 import { LOADING_STEP_STATUSES } from '../Stepper.constants';
 import { DEFAULT_TRANSITION_DURATION, StepperTransition } from './StepperTransition.component';
-import { isErrorInSteps, isStepsLoading, isAllSuccessful } from '../service/Stepper.utils';
+import {
+	isErrorInSteps,
+	isStepsLoading,
+	isAllSuccessful,
+	getFirstLoadingStep,
+} from '../service/Stepper.utils';
 import getDefaultT from '../translate';
 
 const getClass = getTheme(theme);
@@ -17,8 +22,7 @@ const getClass = getTheme(theme);
 const SHOW_COMPLETED_TRANSITION_TIMER = 1000;
 export const TRANSITION_STATE = {
 	STEPS: 'STEPS',
-	TRANSITION: 'TRANSITION',
-	CHILD: 'CHILD',
+	EMPTY: 'EMPTY',
 };
 
 /**
@@ -112,57 +116,32 @@ function transition(transitionState, timer = 0) {
 }
 
 const transitionLoadingToEmpty = transition(
-	TRANSITION_STATE.TRANSITION,
+	TRANSITION_STATE.EMPTY,
 	SHOW_COMPLETED_TRANSITION_TIMER,
 );
-const transitionEmptyToChildren = transition(
-	TRANSITION_STATE.CHILD,
-	SHOW_COMPLETED_TRANSITION_TIMER + DEFAULT_TRANSITION_DURATION,
-);
-const transitionChildrenToEmpty = transition(TRANSITION_STATE.TRANSITION);
 const transitionEmptyToLoading = transition(TRANSITION_STATE.STEPS, DEFAULT_TRANSITION_DURATION);
 
-export function Stepper({ steps, renderActions, children, t }) {
+export function Stepper({ steps, renderActions, t }) {
 	const isInError = isErrorInSteps(steps);
+	const firstLoadingStep = getFirstLoadingStep(steps);
 	const [transitionState, setTransitionState] = useState(
-		isStepsLoading(steps) ? TRANSITION_STATE.STEPS : TRANSITION_STATE.CHILD,
+		isStepsLoading(steps) ? TRANSITION_STATE.STEPS : TRANSITION_STATE.EMPTY,
 	);
 
 	useEffect(() => {
 		const allSuccessful = isAllSuccessful(steps);
-		if (
-			allSuccessful &&
-			(transitionState === TRANSITION_STATE.STEPS ||
-				transitionState === TRANSITION_STATE.TRANSITION)
-		) {
+		if (allSuccessful && transitionState === TRANSITION_STATE.STEPS) {
 			transitionLoadingToEmpty(setTransitionState);
-			transitionEmptyToChildren(setTransitionState);
-		} else if (!allSuccessful && transitionState === TRANSITION_STATE.CHILD) {
-			transitionChildrenToEmpty(setTransitionState);
+		} else if (!allSuccessful && transitionState === TRANSITION_STATE.EMPTY) {
 			transitionEmptyToLoading(setTransitionState);
 		}
 	}, [steps]);
 
 	return (
 		<React.Fragment>
-			<StepperTransition active={transitionState === TRANSITION_STATE.CHILD}>
-				{children}
-			</StepperTransition>
+			<StepperTransition active={transitionState === TRANSITION_STATE.EMPTY} />>
 			<StepperTransition active={transitionState === TRANSITION_STATE.STEPS}>
-				<div className={getClass('stepper')}>
-					<div
-						className={getClass('loading-content-steps', {
-							'stepper-content-error': isInError,
-						})}
-					>
-						<ol className={getClass('stepper-steps')}>
-							{steps.map((step, index, array) => showStep(t, step, index, array))}
-						</ol>
-						{renderActions && renderActions(isInError) ? (
-							<div>{renderActions(isInError)}</div>
-						) : null}
-					</div>
-				</div>
+				<div className={getClass('stepper')}>{firstLoadingStep.label}</div>
 			</StepperTransition>
 		</React.Fragment>
 	);

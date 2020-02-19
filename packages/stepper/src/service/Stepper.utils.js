@@ -28,3 +28,10 @@ export const isAllSuccessful = steps =>
  */
 export const isStepsLoading = steps =>
 	steps.length !== 0 && !isAllSuccessful(steps) && !isErrorInSteps(steps);
+
+/**
+ * This function return the first loading step
+ * @param {array} steps array of steps
+ */
+export const getFirstLoadingStep = steps =>
+	steps.find(step => step.status === LOADING_STEP_STATUSES.LOADING);
