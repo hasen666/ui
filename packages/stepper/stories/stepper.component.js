@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import Action from '@talend/react-components/lib/Actions/Action';
+import PropTypes from 'prop-types';
 // eslint-disable-next-line
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import { LanguageSwitcher } from './config/i18n';
 import { default as Stepper } from '../src/components/Stepper.component';
+import { default as OneLineStepper } from '../src/components/OneLineStepper.component';
 import { StepperConstants } from '../src';
 
 import './style.scss';
@@ -26,6 +28,78 @@ function renderActions(isInError) {
 		</React.Fragment>
 	);
 }
+
+const defaultSteps = [
+	{ label: 'Fetch Sample', status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS },
+	{
+		label: 'Global Quality',
+		status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
+	},
+	{ label: 'Flattening', status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS },
+	{
+		label: 'Column Quality',
+		status: StepperConstants.LOADING_STEP_STATUSES.LOADING,
+	},
+];
+
+function GetSteps(props) {
+	const [steps, setSteps] = useState(defaultSteps);
+
+	const init = () => {
+		setSteps([
+			{
+				label: 'Fetch Sample',
+				status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
+			},
+			{
+				label: 'Global Quality',
+				status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
+			},
+			{
+				label: 'Flattening',
+				status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
+			},
+			{
+				label: 'Column Quality',
+				status: StepperConstants.LOADING_STEP_STATUSES.LOADING,
+			},
+		]);
+	};
+
+	const end = () => {
+		setSteps([
+			{
+				label: 'Fetch Sample',
+				status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
+			},
+			{
+				label: 'Global Quality',
+				status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
+			},
+			{
+				label: 'Flattening',
+				status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
+			},
+			{
+				label: 'Column Quality',
+				status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
+			},
+		]);
+	};
+
+	return (
+		<div>
+			<div>
+				<Action onClick={init} label="init" />
+				<Action onClick={end} label="end" />
+			</div>
+			{props.children(steps)}
+		</div>
+	);
+}
+GetSteps.propTypes = {
+	children: PropTypes.element.isRequired,
+};
 
 stories
 	.addDecorator(story => (
@@ -74,93 +148,23 @@ stories
 			<p>No step to display here, it means content is already loaded.</p>
 		</Stepper>
 	))
-	.add('Stepper successful', () => {
-		const defaultSteps = [
-			{ label: 'Fetch Sample', status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS },
-			{
-				label: 'Global Quality',
-				status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
-			},
-			{ label: 'Flattening', status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS },
-			{
-				label: 'Column Quality',
-				status: StepperConstants.LOADING_STEP_STATUSES.LOADING,
-			},
-		];
-
-		function GetSteps(props) {
-			const [steps, setSteps] = useState(defaultSteps);
-
-			const init = () => {
-				setSteps([
-					{
-						label: 'Fetch Sample',
-						status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
-					},
-					{
-						label: 'Global Quality',
-						status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
-					},
-					{
-						label: 'Flattening',
-						status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
-					},
-					{
-						label: 'Column Quality',
-						status: StepperConstants.LOADING_STEP_STATUSES.LOADING,
-					},
-				]);
-			};
-
-			const end = () => {
-				setSteps([
-					{
-						label: 'Fetch Sample',
-						status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
-					},
-					{
-						label: 'Global Quality',
-						status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
-					},
-					{
-						label: 'Flattening',
-						status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
-					},
-					{
-						label: 'Column Quality',
-						status: StepperConstants.LOADING_STEP_STATUSES.SUCCESS,
-					},
-				]);
-			};
-
-			return (
-				<div>
+	.add('Stepper successful', () => (
+		<GetSteps>
+			{steps => (
+				<Stepper steps={steps} title={title}>
 					<div>
-						<Action onClick={init} label="init" />
-						<Action onClick={end} label="end" />
-					</div>
-					{props.children(steps)}
-				</div>
-			);
-		}
-
-		return (
-			<GetSteps>
-				{steps => (
-					<Stepper steps={steps} title={title}>
+						Content is loaded.
 						<div>
-							Content is loaded.
-							<div>
-								<Action
-									label="Action"
-									bsStyle="info"
-									className="btn-inverse button-padding"
-									onClick={action('click')}
-								/>
-							</div>
+							<Action
+								label="Action"
+								bsStyle="info"
+								className="btn-inverse button-padding"
+								onClick={action('click')}
+							/>
 						</div>
-					</Stepper>
-				)}
-			</GetSteps>
-		);
-	});
+					</div>
+				</Stepper>
+			)}
+		</GetSteps>
+	))
+	.add('Little Stepper', () => <GetSteps>{steps => <OneLineStepper steps={steps} />}</GetSteps>);
