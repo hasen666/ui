@@ -78,8 +78,6 @@ function changeTransitionState(newTransitionState, setTransitionState, timer = 0
  * @param {number} index the index for the key
  */
 function showStep(t, step, index, steps) {
-	const cssStep = getClass('stepper-step', `stepper-step-${step.status}`);
-
 	const a11y = {};
 	if (
 		[LOADING_STEP_STATUSES.LOADING, LOADING_STEP_STATUSES.FAILURE].includes(step.status) ||
@@ -89,8 +87,8 @@ function showStep(t, step, index, steps) {
 	}
 
 	return (
-		<li className={cssStep} key={`step-${index}`} {...a11y}>
-			<div className={getClass('stepper-step-infos')}>
+		<React.Fragment>
+			<div className={getClass('stepper-step-infos-label')}>
 				{getIconByStatus(step.status)}
 				{step.label}
 				{getStatusText(t, step.status)}
@@ -102,7 +100,7 @@ function showStep(t, step, index, steps) {
 					{step.message.description && <p>{step.message.description}</p>}
 				</div>
 			)}
-		</li>
+		</React.Fragment>
 	);
 }
 
@@ -121,9 +119,9 @@ const transitionLoadingToEmpty = transition(
 );
 const transitionEmptyToLoading = transition(TRANSITION_STATE.STEPS, DEFAULT_TRANSITION_DURATION);
 
-export function Stepper({ steps, renderActions, t }) {
+export function Stepper({ steps, t }) {
 	const isInError = isErrorInSteps(steps);
-	const firstLoadingStep = getFirstLoadingStep(steps);
+	const [firstLoadingStepIndex, firstLoadingStep] = getFirstLoadingStep(steps);
 	const [transitionState, setTransitionState] = useState(
 		isStepsLoading(steps) ? TRANSITION_STATE.STEPS : TRANSITION_STATE.EMPTY,
 	);
@@ -139,9 +137,11 @@ export function Stepper({ steps, renderActions, t }) {
 
 	return (
 		<React.Fragment>
-			<StepperTransition active={transitionState === TRANSITION_STATE.EMPTY} />>
+			<StepperTransition active={transitionState === TRANSITION_STATE.EMPTY} />
 			<StepperTransition active={transitionState === TRANSITION_STATE.STEPS}>
-				<div className={getClass('stepper')}>{firstLoadingStep.label}</div>
+				<div className={getClass('stepper')}>
+					{showStep(t, firstLoadingStep, firstLoadingStepIndex, steps)}
+				</div>
 			</StepperTransition>
 		</React.Fragment>
 	);

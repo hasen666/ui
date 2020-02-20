@@ -33,5 +33,7 @@ export const isStepsLoading = steps =>
  * This function return the first loading step
  * @param {array} steps array of steps
  */
-export const getFirstLoadingStep = steps =>
-	steps.find(step => step.status === LOADING_STEP_STATUSES.LOADING);
+export const getFirstLoadingStep = steps => {
+	const index = steps.findIndex(step => step.status === LOADING_STEP_STATUSES.LOADING);
+	return [index, steps[index]];
+};

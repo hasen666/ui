@@ -21,6 +21,9 @@ $stepper-icon-size: $svg-md-size !default;
 
 		&-infos {
 			display: flex;
+			&-label {
+				font-weight: 600;
+			}
 		}
 		&-message {
 			padding-left: 28px;
