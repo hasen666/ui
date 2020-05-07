@@ -23,10 +23,20 @@ $circle-size-small: 1.8rem !default;
 		> button {
 			text-decoration: none;
 			text-transform: none;
-			display: -ms-inline-grid;
-			padding: 0px;
+			padding: 0;
 		}
 	}
+
+	/* only effect in IE11*/
+	@media screen and(-ms-high-contrast:active), (-ms-high-contrast:none) {
+		&-button {
+			> button {
+				display: -ms-inline-grid;
+				padding: 0;
+			}
+		}
+	}
+
 	&-popover {
 		display: flex;
 		flex-direction: column;
