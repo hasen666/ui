@@ -28,7 +28,7 @@ $circle-size-small: 1.8rem !default;
 	}
 
 	/* only effect in IE11*/
-	@media screen and(-ms-high-contrast:active), (-ms-high-contrast:none) {
+	@media screen and(-ms-high-contrast:active), (-ms-high-contrast: none) {
 		&-button {
 			> button {
 				display: -ms-inline-grid;
