@@ -23,6 +23,8 @@ $circle-size-small: 1.8rem !default;
 		> button {
 			text-decoration: none;
 			text-transform: none;
+			display: -ms-inline-grid;
+			padding: 0px;
 		}
 	}
 	&-popover {
